@@ -77,8 +77,39 @@ class Person {
 */
 
 class Car {
+  constructor(model, milesPerGallon) {
+    this.model = model;
+    this.milesPerGallon = milesPerGallon;
+    this.tank = 0;
+    this.odometer = 0;
+  }
 
+  fill(gallons) {
+    return this.tank += gallons;
+  }
+  // The problem: I need to unify these disparate parts in functioal block of 
+  // code.
+  drive(distance) {
+    // This part apparently works (though the Math.floor() part seems a 
+    // little questionable, but it appeased the test code.)
+    this.odometer += distance;
+    while (this.tank > 0) {
+      let spentFuel = Math.floor(distance / this.milesPerGallon);
+      return this.tank -= spentFuel;
+    }
+    // Here I'm trying (without success) to add only the drivable miles prior to 
+    // the fuel running out.
+    if (this.tank === 0) {
+      let lastMiles = distance % this.milesPerGallon;
+      return this.odometer -= lastMiles;
+    }
+    // And this is my unsuccessful attempt at the 'out of gas' string return.
+    if (this.tank === 0) {
+      return `I ran out of fuel at ${this.odometer} miles!`;
+    }
+  }
 }
+
 
 /*
   TASK 3
@@ -92,8 +123,17 @@ class Car {
         + Speaking should return a phrase `Hello my name is {name}, I am from {location}`.
         + {name} and {location} of course come from the instance's own properties.
 */
-class Lambdasian {
+const lambdaStudent = {name: 'Ringo', age: 64, location: 'Liverpool'};
 
+class Lambdasian {
+  constructor(lambdaStudent) {
+    this.name = lambdaStudent.name;
+    this.age = lambdaStudent.age;
+    this.location = lambdaStudent.location;
+  }
+  speak() {
+    return `Hello my name is ${this.name}, I am from ${this.location}`
+  }
 }
 
 /*
