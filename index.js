@@ -87,24 +87,17 @@ class Car {
   fill(gallons) {
     return this.tank += gallons;
   }
-  // The problem: I need to unify these disparate parts in functioal block of 
-  // code.
+
   drive(distance) {
-    // This part apparently works (though the Math.floor() part seems a 
-    // little questionable, but it appeased the test code.)
-    this.odometer += distance;
-    while (this.tank > 0) {
-      let spentFuel = Math.floor(distance / this.milesPerGallon);
-      return this.tank -= spentFuel;
-    }
-    // Here I'm trying (without success) to add only the drivable miles prior to 
-    // the fuel running out.
-    if (this.tank === 0) {
-      let lastMiles = distance % this.milesPerGallon;
-      return this.odometer -= lastMiles;
-    }
-    // And this is my unsuccessful attempt at the 'out of gas' string return.
-    if (this.tank === 0) {
+    let distanceLimit = this.tank * this.milesPerGallon;
+    if (distance <= distanceLimit) {
+      let spentFuel = distance / this.milesPerGallon;
+      let fuelLeft = this.tank - spentFuel;
+      this.odometer += distance;
+      this.tank -= spentFuel;
+    } else if (distance > distanceLimit) {
+      this.odometer += distanceLimit;
+      this.tank = 0;
       return `I ran out of fuel at ${this.odometer} miles!`;
     }
   }
@@ -123,13 +116,12 @@ class Car {
         + Speaking should return a phrase `Hello my name is {name}, I am from {location}`.
         + {name} and {location} of course come from the instance's own properties.
 */
-const lambdaStudent = {name: 'Ringo', age: 64, location: 'Liverpool'};
 
 class Lambdasian {
-  constructor(lambdaStudent) {
-    this.name = lambdaStudent.name;
-    this.age = lambdaStudent.age;
-    this.location = lambdaStudent.location;
+  constructor(lambdaPerson) {
+    this.name = lambdaPerson.name;
+    this.age = lambdaPerson.age;
+    this.location = lambdaPerson.location;
   }
   speak() {
     return `Hello my name is ${this.name}, I am from ${this.location}`
@@ -150,8 +142,19 @@ class Lambdasian {
         + `demo` receives a `subject` string as an argument and returns the phrase 'Today we are learning about {subject}' where subject is the param passed in.
         + `grade` receives a `student` object and a `subject` string as arguments and returns '{student.name} receives a perfect score on {subject}'
 */
-class Instructor {
-
+class Instructor extends Lambdasian {
+  constructor(lambdaPerson) {
+    super(lambdaPerson);
+    this.specialty = lambdaPerson.specialty;
+    this.favLanguage = lambdaPerson.favLanguage;
+    this.catchPhrase = lambdaPerson.catchPhrase;
+  }
+  demo(subject) {
+    return 'Today we are learning about ' + subject;
+  }
+  grade(student, subject) {
+    return `${student.name} receives a perfect score on ` + subject;
+  }
 }
 
 /*
@@ -169,8 +172,22 @@ class Instructor {
         + `PRAssignment` a method that receives a subject as an argument and returns `student.name has submitted a PR for {subject}`
         + `sprintChallenge` similar to PRAssignment but returns `student.name has begun sprint challenge on {subject}`
 */
-class Student {
-
+class Student extends Lambdasian {
+  constructor(lambdaPerson) {
+    super(lambdaPerson)
+    this.previousBackground = lambdaPerson.previousBackground;
+    this.className = lambdaPerson.className;
+    this.favSubjects = lambdaPerson.favSubjects;
+  }
+  listSubjects() {
+    return "Loving " + this.favSubjects[0] + this.favSubjects[1] + this.favSubjects[2];
+  }
+  PRAssignment(subject) {
+    return `${this.name} has submitted a PR for ${subject}`
+  } 
+  sprintChallenge(subject) {
+    return `${this.name} has begun sprint challenge on ${subject}`
+  }
 }
 
 /*
@@ -186,8 +203,18 @@ class Student {
         + `standUp` a method that takes in a slack channel and returns `{name} announces to {channel}, @channel standy times!`
         + `debugsCode` a method that takes in a student object and a subject and returns `{name} debugs {student.name}'s code on {subject}`
 */
-class ProjectManager {
-
+class ProjectManager extends Instructor {
+  constructor(lambdaPerson) {
+    super(lambdaPerson);
+    this.gradClassName = lambdaPerson.gradClassName;
+    this.favInstructor = lambdaPerson.favInstructor;
+  }
+  standUp(channel) {
+    return `${this.name} announces to ${channel}, @channel standy times!`
+  }
+  debugsCode(student, subject) {
+    return `${this.name} debugs ${student.name}'s code on ${subject}`
+  }
 }
 
 /*
